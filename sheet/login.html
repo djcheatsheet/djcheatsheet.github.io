@@ -1,0 +1,67 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Welcome to django cheat sheet.</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="apple-touch-icon" href="icon.png">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/css/mdb.min.css" rel="stylesheet">
+    </head>
+    <body>
+    	<div class="container">
+    		<h1><a href="../">&#x21E6;Django CheatSheet</a></h1>
+    	</div>
+    	<hr>
+    	<div class="container">
+    		<p>First of create an html page for login UI. Copy and paste the following code.</p>
+    		<blockquote>
+    		<pre>
+    			<code>
+    				&lt;form action="" method="POST"&gt;
+					  &lt;div class="form-group"&gt;
+					    &lt;label for="email"&gt;Email address&lt;/label&gt;
+					    &lt;input type="email" name="email" class="form-control" id="email" placeholder="Enter email"&gt;
+					    &lt;div class="email-mg"&gt;&lt;/div&gt;
+					  &lt;/div>
+					  &lt;div class="form-group"&gt;
+					    &lt;label for="password"&gt;Password&lt;/label&gt;
+					    &lt;input type="password" name="password" class="form-control" id="password" placeholder="Password"&gt;
+					    &lt;div class="pass-mg"&gt;&lt;/div&gt;
+					  &lt;/div>
+					  &lt;button type="submit" class="btn btn-primary btn-block" id="loginBtn">Log in&lt;/button&gt;
+					&lt;/form&gt;
+    			</code>
+    		</pre>
+    	</blockquote>
+    	<p>Now paste the following code to your view.py file.</p>
+    	<pre>
+    		<code>
+			def getLogin(request):
+				if request.user.is_authenticated:
+					return redirect('index')
+				else:
+					if request.method == "POST":
+						user = request.POST.get('user')
+						password = request.POST.get('pass')
+						auth = authenticate(request, username=user, password=password)
+						if auth is not None:
+							login(request, auth)
+							return redirect('index')
+					return render(request, "login.html")
+    		</code>
+    	</pre>
+    	</div>
+    	
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/js/mdb.min.js"></script>
+		<script src="https://www.google-analytics.com/analytics.js" async defer></script>
+    </body>
+</html>
