@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Welcome to django cheat sheet.</title>
+        <title>django cheat sheet: Custom registration</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="manifest" href="site.webmanifest">
@@ -14,22 +14,48 @@
     </head>
     <body>
     	<div class="container">
-    		<h1><a href="/">Django CheatSheet</a></h1>
+    		<h1><a href="../">&#x21E6;Django CheatSheet</a></h1>
     	</div>
     	<hr>
     	<div class="container">
-    		<div class="card">
-		    <div class="card-header pink lighten-2 white-text">Admin Area</div>
-		    <div class="card-body">
-		        <ol>
-		        	<li><a href="sheet/login.html">Custom Authentication</a></li>
-		        	<li><a href="sheet/registration.html">Custom Registration</a></li>
-		        </ol>
-		    </div>
-		</div>
+    		<p>Paste the following code to forms.py file to create form instance</p>
+    		<blockquote>
+    		<pre>
+    			<code>
+    				from django.contrib.auth.forms import UserCreationForm
+    				from django.contrib.auth.models import User
+    				class registerUser(UserCreationForm):
+					    class Meta:
+					        model = User
+					        fields = [
+					            'first_name',
+					            'last_name',
+					            'email',
+					            'username',
+					            'password1',
+					            'password2'
+					        ]
+    			</code>
+    		</pre>
+    	</blockquote>
+    		<p>Now write the views.py file like following coding snippet</p>
+    		<blockquote>
+    		<pre>
+    			<code>
+				from .forms import registerUser
+				def getRegister(request):
+					form = registerUser(request.POST or None)
+					if form.is_valid():
+						instance = form.save(commit=False)
+						instance.save()
+						return HttpResponse("&lt;h1&gt;Account is created successfully&lt;/h1&gt;")
+					return render(request, 'register.html', {"form": form})
+    			</code>
+    		</pre>
+    	</blockquote>
+    	
     	</div>
-
-       
+    	
 
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
