@@ -1,0 +1,136 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>django cheat sheet: Custom registration</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="apple-touch-icon" href="icon.png">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/css/mdb.min.css" rel="stylesheet">
+    </head>
+    <body>
+    	<div class="container">
+    		<h1><a href="../">&#x21E6;Django CheatSheet</a></h1>
+    	</div>
+    	<hr>
+    	<div class="container">
+            <p>Create a token.py file and paste the following coding snippet</p>
+            <blockquote>
+                <pre>
+                    <code>
+    from django.contrib.auth.tokens import PasswordResetTokenGenerator
+    from django.utils import six
+    class TokenGenerator(PasswordResetTokenGenerator):
+        def _make_hash_value(self, user, timestamp):
+            return (six.text_type(user.pk) + six.text_type(timestamp) +six.text_type(user.is_active))
+        account_activation_token = TokenGenerator()
+
+                    </code>
+                </pre>
+            </blockquote>
+    		<p>Paste the following code to forms.py file to create form instance</p>
+    		<blockquote>
+    		<pre>
+    			<code>
+    from django.contrib.auth.forms import UserCreationForm
+    from django.contrib.auth.models import User
+    class registerUser(UserCreationForm):
+        class Meta:
+            model = User
+            fields = [
+            'first_name',
+            'last_name',
+            'email',
+            'username',
+            'password1',
+            'password2'
+            ]
+    			</code>
+    		</pre>
+    	</blockquote>
+    		<p>Now write the views.py file like following coding snippet</p>
+    		<blockquote>
+    		<pre>
+    			<code>
+    from .forms import registerUser
+    from django.contrib.sites.shortcuts import get_current_site
+    from django.core.mail import send_mail
+    from .tokens import account_activation_token
+    def getRegister(self, request):
+        form = registerUser(request.POST or None)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.is_active = False
+            instance.save()
+            current_site = get_current_site(request)
+            mail_subject = 'VMA: Activate your account.'
+            message = render_to_string('mail_confirm_message.html', {
+                'user': instance,
+                'domain': current_site.domain,
+                'uid': instance.pk,
+                'token': account_activation_token.make_token(instance)
+            })
+            to_email = form.cleaned_data.get('email')
+            to_list = [to_email]
+            from_email = settings.EMAIL_HOST_USER
+            usr = get_object_or_404(User, id=instance.id)
+            obj = verifyAccount.objects.create(user=usr, hash_code=message, is_verify=False)
+            obj.save()
+            send_mail(mail_subject, message, from_email, to_list, fail_silently=True)
+            return HttpResponse('&lt;h3&gt;A confirmation mail was sent. Please check inbox and confirm your account to '
+                    'login&lt;/h3&gt;')
+        else:
+            messages.warning(request, 'something went wrong')
+            return redirect('account:register')
+    			</code>
+    		</pre>
+    	</blockquote>
+
+        <p>Now create mail_confirm_message.html file in template directory and paste the following code.</p>
+        <blockquote>
+            <pre>
+                <code>
+    {% autoescape off %}
+    Hi {{ user.username }},
+    Thanks for your registration in our site
+    Please click on the link below to confirm your registration,
+    http://{{ domain }}{% url 'activate' uid=uid token=token %}
+    {% endautoescape %}
+                </code>
+            </pre>
+        </blockquote>
+        <p>Write another function named activate in your views.py file and paste the following code to active the account.</p>
+    	<blockquote>
+            <pre>
+                <code>
+    def activate(request, uidb64, token):
+        try:
+            user = User.objects.get(pk=uidb64)
+            verify = verifyAccount.objects.get(user_id=uidb64)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            verify.is_verify = True
+            verify.save()
+            return HttpResponse('Thank you for your email confirmation. Now you can <a href="/login" %}">login</a> your account.')
+        else:
+            return HttpResponse('Activation link is invalid!')
+                </code>
+            </pre>   
+        </blockquote>
+    	</div>
+    	
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/js/mdb.min.js"></script>
+		<script src="https://www.google-analytics.com/analytics.js" async defer></script>
+    </body>
+</html>
