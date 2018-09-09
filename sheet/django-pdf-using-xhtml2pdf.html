@@ -1,0 +1,81 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>django cheat sheet: Registration with mail confirmation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-site-verification" content="O3dP4oiGaUPHJWtlqYQvmdnVHQlV3fxPwf6WDoBFj5Y" />
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="apple-touch-icon" href="icon.png">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/css/mdb.min.css" rel="stylesheet">
+    </head>
+    <body>
+    	<div class="container">
+    		<h1><a href="../">&#x21E6;Django CheatSheet</a></h1>
+    	</div>
+    	<hr>
+    	<div class="container">
+            <p>Following code will go to views.py file</p>
+            <blockquote>
+                <pre>
+                    <code>
+    from .require import renderPdf
+    class pdf(View):
+    def get(self, request, id):
+        try:
+            query=get_object_or_404(article,id=id)
+        except:
+            Http404('Content not found')
+        context={
+            "article":query
+        }
+        article_pdf=renderPdf('pdf.html',context)
+        return HttpResponse(article_pdf,content_type='application/pdf')
+                    </code>
+                </pre>
+            </blockquote>
+    		<p>Create new python file named require.py and paste the following code and modify.</p>
+    		<blockquote>
+    		<pre>
+    			<code>
+    from io import BytesIO
+    from django.http import HttpResponse
+    from django.template.loader import get_template
+    from xhtml2pdf import pisa
+    def renderPdf(template, content={}):
+        t=get_template(template)
+        send_data=t.render(content)
+        result=BytesIO()
+        pdf=pisa.pisaDocument(BytesIO(send_data.encode("ISO-8859-1")),result)
+        if not pdf.err:
+            return HttpResponse(result.getvalue(),content_type='application/pdf')
+        else:
+            return None
+    			</code>
+    		</pre>
+    	</blockquote>
+    		<p>Add the following coding snippet to your urls.py</p>
+    		<blockquote>
+    		<pre>
+    			<code>
+    path('pdf/&lt;int:id&gt;',views.pdf.as_view(), name="pdf"),
+    			</code>
+    		</pre>
+    	</blockquote>
+
+        <p>Download the html4 template from <a href="https://drive.google.com/file/d/1RmUU5KyWtEND_W7KvWa1WYroobRNgKZ4/view" target="_blank">the link</a> and modify to show the pdf</p>
+        
+    	</div>
+    	
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/js/mdb.min.js"></script>
+		<script src="https://www.google-analytics.com/analytics.js" async defer></script>
+    </body>
+</html>
