@@ -12,6 +12,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/css/mdb.min.css" rel="stylesheet">
+        <link rel="stylesheet" media="all" href="../assets/css/jquery.highlight.css" />
     </head>
     <body>
     	<div class="container">
@@ -19,46 +20,43 @@
     	</div>
     	<hr>
     	<div class="container">
-    		<p>Paste the following code to forms.py file to create form instance</p>
-    		<blockquote>
-    		<pre>
-    			<code>
-    				from django.contrib.auth.forms import UserCreationForm
-    				from django.contrib.auth.models import User
-    				class registerUser(UserCreationForm):
-					    class Meta:
-					        model = User
-					        fields = [
-					            'first_name',
-					            'last_name',
-					            'email',
-					            'username',
-					            'password1',
-					            'password2'
-					        ]
-    			</code>
-    		</pre>
-    	</blockquote>
+<p>Paste the following code to forms.py file to create form instance</p>
+<pre class="code" data-language="python">
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+class registerUser(UserCreationForm):
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email',
+            'username',
+            'password1',
+            'password2'
+        ]
+</pre>
     		<p>Now write the views.py file like following coding snippet</p>
-    		<blockquote>
-    		<pre>
-    			<code>
-				from .forms import registerUser
-				def getRegister(request):
-					form = registerUser(request.POST or None)
-					if form.is_valid():
-						instance = form.save(commit=False)
-						instance.save()
-						return HttpResponse("&lt;h1&gt;Account is created successfully&lt;/h1&gt;")
-					return render(request, 'register.html', {"form": form})
-    			</code>
-    		</pre>
-    	</blockquote>
-    	
+<pre class="code" data-language="python">
+	from .forms import registerUser
+	def getRegister(request):
+		form = registerUser(request.POST or None)
+		if form.is_valid():
+			instance = form.save(commit=False)
+			instance.save()
+			return HttpResponse("&lt;h1&gt;Account is created successfully&lt;/h1&gt;")
+		return render(request, 'register.html', {"form": form})
+</pre>
     	</div>
     	
 
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="../assets/js/jquery.highlight.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('pre.code').highlight({source:1, zebra:1, indent:'space', list:'ol',attribute: 'data-language'});
+            });
+        </script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/js/mdb.min.js"></script>
