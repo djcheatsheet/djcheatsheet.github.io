@@ -66,19 +66,22 @@ class SpatialData(models.Model):
     def __str__(self):
     	return self.title
 </pre> 
-
-<p>You can't upload any image, rather you only add the link to show image here. Just re-write the code to upload image</p>
+<p>Now migrate the model and visite the add article page and you will see like following.</p>
+<img src="../assets/img/ckeditor1.PNG" class="img-thumbnail" alt="">
+<p>You can't upload any image, rather you only add the link to show image here. Just re-write the code to upload image and add Rich </p>
 <pre class="code" data-language="python">
 from django.db import models
-from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 class SpatialData(models.Model):
 	title=models.CharField(max_length=100)
-	body=RichTextField()
+	body=RichTextUploadingField()
     def __str__(self):
     	return self.title
 </pre>
-<p>Now migrate the model and visite the add article page and you will see like following.</p>
-<img src="../assets/img/ckeditor1.PNG" class="img-thumbnail" alt="">
+<p>You have to add a simple change in form.html file for upload image. Add the following coding snippet after <span style="color: red;">{% csrf_token %}</span></p>
+<pre class="code" data-language="python">
+    {{ form.media }}
+</pre>
 </div>
     	
 
