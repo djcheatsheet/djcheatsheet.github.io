@@ -1,0 +1,97 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>django cheat sheet: Django ck-editor</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-site-verification" content="O3dP4oiGaUPHJWtlqYQvmdnVHQlV3fxPwf6WDoBFj5Y" />
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="icon" href="../assets/img/djcheatsheet-icon.png" sizes="32x32" />
+        <link rel="icon" href="../assets/img/djcheatsheet-icon.png" sizes="192x192" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/css/mdb.min.css" rel="stylesheet">
+        <link rel="stylesheet" media="all" href="../assets/css/jquery.highlight.css" />
+    </head>
+    <body>
+    	<div style="position:sticky; overflow:hidden; z-index:1000; top:0px; background:white; border-bottom: 1px solid rgba(232, 224, 224, 0.7);box-shadow: 1px 1px 2px lightgrey;">
+		<div class="container">
+		    <h1><a href="../">&#x21E6;Django CheatSheet</a></h1>
+		</div>
+	</div>
+    	<div class="container">
+            <p>Open the terminal to install ck editor module using following command</p>
+            
+<pre class="code" data-language="python">
+pip install django-ckeditor
+</pre>
+<p>Open the settings.py file and add the coding snippet in <span style="color: red;">INSTALLED_APPS</span></p>
+    		
+<pre class="code" data-language="python">
+'ckeditor',
+'ckeditor_uploader',
+</pre>
+<p>Add the following coding snippet after the <span style="color: red">INSTALLED_APPS</span></p>
+<pre class="code" data-language="python">
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+</pre>
+<p>Add the following code bottom of the settings.py file </p>
+<pre class="code" data-language="python">
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+</pre>
+<p>Add the following code in urls.py of root app</p>
+<pre class="code" data-language="python">
+from django.conf import settings
+from django.conf.urls.static import static
+if settings.DEBUG:
+    urlpatterns+=static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns+= static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+</pre> 
+<p>Also add the path in urls.py file of same app</p>
+<pre class="code" data-language="python">
+path('ckeditor/', include('ckeditor_uploader.urls')),
+</pre>
+<p>Now start an app and goto it's models.py file. Now we are going to create a model name article with title and body. Title will be the charfield but body will be editor. Follow the code below</p>
+<pre class="code" data-language="python">
+from django.db import models
+from ckeditor.fields import RichTextField
+class SpatialData(models.Model):
+	title=models.CharField(max_length=100)
+	body=RichTextField()
+    def __str__(self):
+    	return self.title
+</pre> 
+
+<p>You can't upload any image, rather you only add the link to show image here. Just re-write the code to upload image</p>
+<pre class="code" data-language="python">
+from django.db import models
+from ckeditor.fields import RichTextField
+class SpatialData(models.Model):
+	title=models.CharField(max_length=100)
+	body=RichTextField()
+    def __str__(self):
+    	return self.title
+</pre>
+<p>Now migrate the model and visite the add article page and you will see like following.</p>
+<img src="../assets/img/ckeditor1.PNG" class="img-thumbnail" alt="">
+</div>
+    	
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="../assets/js/jquery.highlight.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('pre.code').highlight({source:1, zebra:1, indent:'space', list:'ol',attribute: 'data-language'});
+            });
+        </script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/js/mdb.min.js"></script>
+		<script src="https://www.google-analytics.com/analytics.js" async defer></script>
+    </body>
+</html>
